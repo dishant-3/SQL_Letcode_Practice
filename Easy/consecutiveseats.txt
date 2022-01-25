@@ -42,3 +42,22 @@ from
     from cinema
 ) as tb1
 where tb1.free =1 and (tb1.prev=1 or tb1.next=1);
+
+-- ALternate Solution
+--mysql
+select seat_id 
+from (
+    select 
+    current.seat_id, 
+    case when exists (
+                        select 1  
+                        from cinema previous 
+                        where previous.seat_id = current.seat_id - 1 
+                        and previous.free = 1) 
+                and current.free = 1 then current.seat_id - 1 else null end previous,
+    case when exists (
+                        select 1  
+                        from cinema next 
+                        where next.seat_id = current.seat_id + 1 
+                        and next.free = 1) 
+                and current.free = 1 then current.seat_id + 1 else null end next;
