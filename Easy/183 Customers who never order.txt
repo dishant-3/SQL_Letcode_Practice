@@ -30,7 +30,7 @@
 
 
 -- Solution
-select name as cust from customers
+select [name] as customers from customers
 where id not in(
 select distinct customer_id from orders);
 

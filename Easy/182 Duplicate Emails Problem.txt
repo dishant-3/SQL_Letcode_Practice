@@ -1,0 +1,32 @@
+Write a SQL query to find all duplicate emails in a table named Person.
+
++----+---------+
+| Id | Email   |
++----+---------+
+| 1  | a@b.com |
+| 2  | c@d.com |
+| 3  | a@b.com |
++----+---------+
+For example, your query should return the following for the above table:
+
++---------+
+| Email   |
++---------+
+| a@b.com |
++---------+
+
+-- mssql solution
+select distinct email
+from
+(select email,ROW_NUMBER() OVER(PARTITION BY email ORDER BY email) as r_n 
+from Person) as tb1
+where r_n >1;
+
+-- alternate solution
+select  email
+from
+(select email, count(email) as email_cnt
+from Person
+group by email
+) as tb1
+where email_cnt >1;
