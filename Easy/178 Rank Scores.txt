@@ -31,3 +31,11 @@ Important Note: For MySQL solutions, to escape reserved words used as column nam
 -- MSSQL Solution
 select score, RANK() over (ORDER BY score DESC) as [Rank]
 from Scores;
+
+-- MYSQL Solution ( Didn't understand this solution)
+select score,
+    (select count(distinct  ss.score) + 1 
+     from scores ss 
+     where ss.score > s.score) `rank`
+from scores s
+order by score desc
