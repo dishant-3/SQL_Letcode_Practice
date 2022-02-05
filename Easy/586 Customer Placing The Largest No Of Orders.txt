@@ -1,0 +1,85 @@
+Query the customer_number from the orders table for the customer who has placed the largest number of orders.
+
+It is guaranteed that exactly one customer will have placed more orders than any other customer.
+
+The orders table is defined as follows:
+
+| Column            | Type      |
+|-------------------|-----------|
+| order_number (PK) | int       |
+| customer_number   | int       |
+| order_date        | date      |
+| required_date     | date      |
+| shipped_date      | date      |
+| status            | char(15)  |
+| comment           | char(200) |
+Sample Input
+
+
+| order_number | customer_number | order_date | required_date | shipped_date | status | comment |
+|--------------|-----------------|------------|---------------|--------------|--------|---------|
+| 1            | 1               | 2017-04-09 | 2017-04-13    | 2017-04-12   | Closed |         |
+| 2            | 2               | 2017-04-15 | 2017-04-20    | 2017-04-18   | Closed |         |
+| 3            | 3               | 2017-04-16 | 2017-04-25    | 2017-04-20   | Closed |         |
+| 4            | 3               | 2017-04-18 | 2017-04-28    | 2017-04-25   | Closed |         |
+Sample Output
+
+| customer_number |
+|-----------------|
+| 3               |
+Explanation
+
+The customer with number '3' has two orders, which is greater than either customer '1' or '2' because each of them  only has one order. 
+So the result is customer_number '3'.
+
+-- MSSQL Solution
+Select top 1 customer_number
+from orders
+group by customer_number
+order by count(order_number) DESC;
+
+-- Incorrect Query
+select top1 customer_number
+from
+(
+Select  customer_number,count(order_number)
+from orders
+group by customer_number
+order by count(order_number) DESC
+) as tb1;
+ ERROR : 
+The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP, OFFSET or FOR XML is also specified.
+
+-- Solution 1
+select top 1 customer_number 
+from
+(
+select customer_number,count(distinct order_number) as cnt_orders
+from orders
+group by customer_number
+) as tb1
+order by cnt_orders desc ;
+-----------------------
+-- Solution 2
+select top 1 customer_number 
+from
+(
+select customer_number,max(rnk) as mx_rnk 
+from
+(
+	select customer_number,order_number,RANK()OVER(partition by customer_number order by order_number) as rnk
+	from orders;
+) as tb1
+group by customer_number
+) as tb2
+order by mx_rnk desc;
+-- This is not a good way I feel because after using rank function if we have to group by then solution 1 is better.
+------------------------------------
+-- Solution 3 (Learnt that Aggregate functions can be applied even in the Window Functions)
+WITH cte as
+(
+select customer_number,RANK() OVER (ORDER BY count(order_number) desc) as rnk
+from
+orders 
+group by customer_number
+) select customer_number from cte where rnk = 1;

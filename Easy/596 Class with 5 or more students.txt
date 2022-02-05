@@ -1,0 +1,43 @@
+LeetCode Problem 596.
+
+There is a table courses with columns: student and class.
+
+Please list out all classes which have more than or equal to 5 students.
+
+For example, the table:
+
++---------+------------+
+| student | class      |
++---------+------------+
+| A       | Math       |
+| B       | English    |
+| C       | Math       |
+| D       | Biology    |
+| E       | Math       |
+| F       | Computer   |
+| G       | Math       |
+| H       | Math       |
+| I       | Math       |
++---------+------------+
+Should output:
+
++---------+
+| class   |
++---------+
+| Math    |
++---------+
+
+-- MSSQL Solution
+
+select class
+from 
+(select class,count(distinct student) as cnt_student
+from courses
+group by class) as tb1
+where cnt_student >=5;
+
+-- Alternate solution
+select class
+from courses
+group by class
+having count(distinct student) >= 5
