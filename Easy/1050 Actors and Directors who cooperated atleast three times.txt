@@ -32,3 +32,14 @@ Result table:
 | 1           | 1           |
 +-------------+-------------+
 The only pair is (1, 1) where they cooperated exactly 3 times.
+
+--MSSQL Solution
+
+select actor_id,director_id
+from
+(
+select actor_id,director_id,count(timestamp) as cnt
+from ActorDirector
+group by actor_id,director_id
+) as tb1
+where cnt >=3;
