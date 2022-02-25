@@ -60,7 +60,8 @@ Both sellers with id 1 and 3 sold products with the most total price of 2800.
 select seller_id
 from sales
 group by seller_id
-having sum(price) in (
+having sum(price) in 
+(
 select max(total_sales) as mx_sale
 from
 (
@@ -68,5 +69,19 @@ Select seller_id, sum(price) as total_sales
 from sales
 group by seller_id
 ) as tb1
-)
+) order by seller_id;
 
+
+
+-- Wrong Solution
+--Using this below query we will only get one seller_id
+
+select distinct seller_id
+from Sales
+group by seller_id
+having sum(price) = (
+    select sum(price) as max_price
+    from Sales
+    group by seller_id
+    order by max_price desc
+    limit 1)
