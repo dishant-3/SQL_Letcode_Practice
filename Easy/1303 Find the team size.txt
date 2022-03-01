@@ -40,3 +40,21 @@ Result table:
 Employees with Id 1,2,3 are part of a team with team_id = 8.
 Employees with Id 4 is part of a team with team_id = 7.
 Employees with Id 5,6 are part of a team with team_id = 9.
+
+-- MSSQL Solution
+
+select tb1.employee_id,tb2.team_size
+from
+employee as tb1
+left join
+(select team_id,count(distinct employee_id) as team_size
+from employee 
+) as tb2
+on tb1.team_id = tb2.team_id;
+
+-- Alternate Solution
+select employee_id,COUNT(employee_id) OVER(PARTITION BY team_id ) as team_size
+from employee
+order by employee_id;
+
+-- Remember that order by clause is not necessary with the Aggregate functions over Partition by clause
