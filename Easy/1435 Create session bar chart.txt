@@ -68,4 +68,5 @@ union
 select '15 or more' as bin,
 sum( case when duration/60 >= 15 then 1 else 0 end) as total from session_1;
 
--- Solution 2 gives the correct result because in solution 1 i was missing the [10-15> part in results.
+-- Solution 2 gives the correct result because in solution 1 
+The no of sessions with bin 10 to 15 is zero and thus [10-15> bin will be missed in the solution 1.
