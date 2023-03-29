@@ -29,7 +29,7 @@ Important Note: For MySQL solutions, to escape reserved words used as column nam
 
 
 -- MSSQL Solution
-select score, RANK() over (ORDER BY score DESC) as [Rank]
+select score, DENSE_RANK() over (ORDER BY score DESC) as [Rank]
 from Scores;
 
 -- MYSQL Solution ( Didn't understand this solution)
